@@ -1,0 +1,116 @@
+<p-toast></p-toast>
+
+<div class="card">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+            <button pButton pRipple  icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedFormation()" [disabled]="!selectedFormations || !selectedFormations.length"></button>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+            <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="p-mr-2 p-d-inline-block"></p-fileUpload>
+            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="formations" [rows]="10" [paginator]="true" [globalFilterFields]="['description','nom','dateDebut','dateFin']"
+        [(selection)]="selectedFormations" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+     
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 3rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th> 
+                 <th pSortableColumn="description">description <p-sortIcon field="description"></p-sortIcon></th>
+            
+                 <th pSortableColumn="nom">nom <p-sortIcon field="nom"></p-sortIcon></th>
+                 <th pSortableColumn="dateDebut">dateDebut <p-sortIcon field="dateDebut"></p-sortIcon></th>
+                 <th pSortableColumn="dateFin">dateFin <p-sortIcon field="dateFin"></p-sortIcon></th>
+
+               
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-formation>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="formation"></p-tableCheckbox>
+                </td>
+                 <td>{{formation.description}}</td>
+                <td>{{formation.nom}}</td>
+                <td>{{formation.dateDebut}}</td>
+                <td>{{formation.dateFin}}</td>
+               
+                
+              
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="editFormation(formation)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="onDelete(formation)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                In total there are {{formations ? formations.length : 0 }} formations.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="formationDialog" [style]="{width: '600px'}" header="formations Details" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content" *ngIf="formationFormGroupe">
+        
+       <form [formGroup]="formationFormGroupe">
+        <input type="text" name="id" pInputText formControlName="id" hidden="true" />
+        <div class="form-group" > 
+              <div class="form-group">
+            <label >description</label>
+            <input name="description" pInputTextarea  rows="3" formControlName="description" cols="20"/>
+        </div>
+            <label>nom</label>
+            <input type="text" name="nom" pInputText formControlName="nom" />
+            
+        </div>
+        <!-- <div class="form-group">
+        
+            <label for="dateDebut">dateDebut</label>
+            <input type="datetime-local" id="dateDebut"   pInputText name="dateDebut"  formControlName="dateDebut"  />
+            
+            
+      </div>
+      <div class="form-group">
+        
+        <label for="Date_Fin">dateFin</label>
+        <input type="datetime-local" id="dateFin"   pInputText name="dateFin"  formControlName="dateFin"  />
+        
+        
+  </div> -->
+  <div class="form-group">
+    <div class="p-field p-col-12 p-md-6">
+        <label for="dateDebut">dateDebut</label>
+        <p-calendar formControlName="dateDebut" [showTime]="true" inputId="dateDebut"></p-calendar>
+    </div>
+
+</div>
+<div class="form-group">
+    <div class="p-field p-col-12 p-md-6">
+        <label for="dateFin">dateFin</label>
+        <p-calendar formControlName="dateFin" [showTime]="true" inputId="dateFin"></p-calendar>
+    </div>
+
+</div>
+
+    </form>
+
+      
+    </ng-template>
+    
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFormation()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+

@@ -1,0 +1,94 @@
+<p-toast></p-toast>
+
+<div class="card">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+            <button pButton pRipple  icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedContact()" [disabled]="!selectedContacts || !selectedContacts.length"></button>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+            <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="p-mr-2 p-d-inline-block"></p-fileUpload>
+            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="contacts" [rows]="10" [paginator]="true" [globalFilterFields]="['description','nom']"
+        [(selection)]="selectedContacts" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+     
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 3rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th> 
+                 <th pSortableColumn="nom">nom <p-sortIcon field="nom"></p-sortIcon></th>
+                <th pSortableColumn="prenom">prenom <p-sortIcon field="prenom"></p-sortIcon></th>
+                <th pSortableColumn="email">email <p-sortIcon field="email"></p-sortIcon></th>
+                <th pSortableColumn="telephone">telephone <p-sortIcon field="telephone"></p-sortIcon></th>
+               
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-contact>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="contact"></p-tableCheckbox>
+                </td>
+                 <td>{{contact.nom}}</td>
+                <td>{{contact.prenom}}</td>
+                <td>{{contact.email}}</td>
+                <td>{{contact.telephone}}</td>
+               
+                
+              
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="editContact(contact)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="onDelete(contact)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                In total there are {{contacts ? contacts.length : 0 }} contacts.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="contactDialog" [style]="{width: '450px'}" header="contacts Details" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content" *ngIf="contactFormGroupe">
+        
+       <form [formGroup]="contactFormGroupe">
+        <input type="text" name="id" pInputText formControlName="id" hidden="true" />
+        <div class="form-group" > 
+              <div class="form-group">
+            <label >nom</label>
+            <input name="nom" pInputTextarea  rows="3" formControlName="nom" cols="20"/>
+        </div>
+            <label>prenom</label>
+            <input type="text" name="prenom" pInputText formControlName="prenom" />
+            <div class="form-group">
+                <label >email</label>
+                <input name="email" pInputTextarea  rows="3" formControlName="email" cols="20"/>
+            </div>
+            <div class="form-group">
+                <label >telephone</label>
+                <input name="telephone" pInputTextarea  rows="3" formControlName="telephone" cols="20"/>
+            </div>
+        </div>
+     
+      
+
+    </form>
+
+      
+    </ng-template>
+    
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveContact()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

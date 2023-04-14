@@ -1,0 +1,136 @@
+<p-toast></p-toast>
+
+<div class="card">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2"
+                (click)="openNew()"></button>
+            <button pButton pRipple icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedCv()"
+                [disabled]="!selectedCvs || !selectedCvs.length"></button>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+            <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import"
+                class="p-mr-2 p-d-inline-block"></p-fileUpload>
+            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="cvs" [rows]="10" [paginator]="true" [globalFilterFields]="['description','nom']"
+        [(selection)]="selectedCvs" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 3rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th pSortableColumn="description">description <p-sortIcon field="description"></p-sortIcon></th>
+                <th pSortableColumn="nom">nom <p-sortIcon field="nom"></p-sortIcon></th>
+                <th pSortableColumn="contact">contact <p-sortIcon field="contact"></p-sortIcon></th>
+
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-cv>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="cv"></p-tableCheckbox>
+                </td>
+                <td>{{cv.nom}}</td>
+                <td>{{cv.prenom}}</td>
+                <td>{{cv.contact.nom}}</td>
+
+
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+                        (click)="editCv(cv)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        (click)="onDelete(cv)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                In total there are {{cvs ? cvs.length : 0 }} cvs.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="cvDialog" [style]="{width: '450px', height:'10000px'}" header="cvs Details" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content" *ngIf="cvFormGroupe">
+
+        <form [formGroup]="cvFormGroupe">
+            <input type="text" name="id" pInputText formControlName="id" hidden="true" />
+            <div class="form-group">
+                <div class="form-group">
+                    <label>nom</label>
+                    <input name="nom" pInputTextarea rows="3" formControlName="nom" cols="20" />
+                </div>
+                <div class="form-group">
+                    <label>prenom</label>
+                    <input type="text" name="prenom" pInputText formControlName="prenom" />
+                </div>
+               <!-- <div class="form-group">
+                    <label class="col-sm-4 col-form-label">contact
+                    </label>
+                    <div class="col-sm-18">
+                        <p-dropdown [options]="contacts" optionValue="id" optionLabel="nom" id="contact.id" formControlName="contact">
+
+                        </p-dropdown>
+                    </div>
+                </div>-->
+                <div class="form-group row mb-3">
+                    <div class="col">
+                      <label for="exampleFormControlInput1">contact</label>
+                      <select class="form-control" id="contact" required formControlName="contact" name="contact" type="string">
+                        <option *ngFor="let contact of contacts" [value]="contact.id">{{contact.nom}}</option>
+                      </select>
+                      
+                    </div>
+                  </div>
+                <div class="form-group">
+
+                    <label for="competences">competences</label> <br>
+                    <p-multiSelect [options]="competences" formControlName="competences"
+                        optionLabel="nom"></p-multiSelect>
+
+                </div>
+                <div class="form-group">
+
+                    <label for="formations">formations</label> <br>
+                    <p-multiSelect [options]="formations" formControlName="formations"
+                        optionLabel="nom"></p-multiSelect>
+
+                </div>
+                <div class="form-group">
+
+                    <label for="langues">langues</label> <br>
+                    <p-multiSelect [options]="langues" formControlName="langues" optionLabel="langue"></p-multiSelect>
+
+                </div>
+                <div class="form-group">
+
+                    <label for="experiences">experiences</label> <br>
+                    <p-multiSelect [options]="experiences" formControlName="experiences"
+                        optionLabel="titre"></p-multiSelect>
+
+                </div>
+
+            
+
+
+            </div>
+        </form>
+
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveCv()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
